@@ -67,11 +67,7 @@ var (
 var agentCmd = &cobra.Command{
 	Use: "agent",
 	Run: func(cmd *cobra.Command, args []string) {
-		if runtime.GOOS == "darwin" {
-			run() // https://github.com/golang/go/issues/59229
-		} else {
-			runService("", nil)
-		}
+		runService("", nil)
 	},
 	PreRun:           preRun,
 	PersistentPreRun: persistPreRun,
@@ -319,24 +315,20 @@ func runService(action string, flags []string) {
 	}
 	s, err := service.New(prg, svcConfig)
 	if err != nil {
-		log.Fatal("创建服务时出错: ", err)
+		log.Printf("创建服务时出错，以普通模式运行: %v", err)
+		run()
+		return
 	}
 	prg.service = s
 
-	errs := make(chan error, 5)
-	util.Logger, err = s.Logger(errs)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	go func() {
-		for {
-			err := <-errs
-			if err != nil {
-				log.Print(err)
-			}
+	if agentConfig.Debug {
+		serviceLogger, err := s.Logger(nil)
+		if err != nil {
+			log.Printf("获取 service logger 时出错: %+v", err)
+		} else {
+			util.Logger = serviceLogger
 		}
-	}()
+	}
 
 	if action == "install" {
 		initName := s.Platform()
