@@ -21,7 +21,7 @@ type program struct {
 
 var serviceCmd = &cobra.Command{
 	Use:    "service <install/uninstall/start/stop/restart>",
-	Short:  "服务与自启动设置",
+	Short:  "service manager",
 	Args:   cobra.ExactArgs(1),
 	Run:    serviceActions,
 	PreRun: servicePreRun,
@@ -65,7 +65,7 @@ func servicePreRun(cmd *cobra.Command, args []string) {
 	}
 
 	if agentCliParam.ReportDelay < 1 || agentCliParam.ReportDelay > 4 {
-		println("report-delay 的区间为 1-4")
+		println("report-delay range is 1-4")
 		os.Exit(1)
 	}
 }

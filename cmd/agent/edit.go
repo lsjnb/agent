@@ -14,7 +14,7 @@ import (
 
 var editCmd = &cobra.Command{
 	Use:   "edit",
-	Short: "修改要监控的网卡/分区名单，修改自定义 DNS",
+	Short: "edit control interface list",
 	Run:   editAgentConfig,
 	Args:  cobra.NoArgs,
 }
@@ -121,7 +121,7 @@ func editAgentConfig(cmd *cobra.Command, args []string) {
 			host, _, err := net.SplitHostPort(s)
 			if err == nil {
 				if net.ParseIP(host) == nil {
-					err = errors.New("格式错误")
+					err = errors.New("format error")
 				}
 			}
 			if err != nil {

