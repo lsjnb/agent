@@ -457,9 +457,9 @@ func doSelfUpdate(useLocalVersion bool) {
 	var latest *selfupdate.Release
 	var err error
 	if monitor.CachedCountryCode != "cn" && !agentCliParam.UseGiteeToUpgrade {
-		latest, err = selfupdate.UpdateSelf(v, "nezhahq/agent")
+		latest, err = selfupdate.UpdateSelf(v, "Paper-Dragon/agent")
 	} else {
-		latest, err = selfupdate.UpdateSelfGitee(v, "naibahq/agent")
+		latest, err = selfupdate.UpdateSelfGitee(v, "Paper-Dragon/agent")
 	}
 	if err != nil {
 		printf("更新失败: %v", err)
