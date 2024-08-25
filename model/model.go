@@ -15,6 +15,8 @@ type AgentConfig struct {
 	Temperature                 bool
 	Debug                       bool
 	v                           *viper.Viper
+	Server	string
+	Password string
 }
 
 // Read 从给定的文件目录加载配置文件

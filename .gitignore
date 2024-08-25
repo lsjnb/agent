@@ -3,3 +3,5 @@
 /cmd/agent/agent
 *.pprof
 dist
+config.yml
+nezha-agent.exe

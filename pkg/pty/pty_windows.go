@@ -58,7 +58,7 @@ func DownloadDependency() error {
 	if !isWin10 {
 		executablePath, err := getExecutableFilePath()
 		if err != nil {
-			return fmt.Errorf("winpty 获取文件路径失败: %v", err)
+			return fmt.Errorf("winpty can not get path: %v", err)
 		}
 
 		winptyAgentExe := filepath.Join(executablePath, "winpty-agent.exe")
@@ -67,7 +67,7 @@ func DownloadDependency() error {
 		fe, errFe := os.Stat(winptyAgentExe)
 		fd, errFd := os.Stat(winptyAgentDll)
 		if errFe == nil && fe.Size() > 300000 && errFd == nil && fd.Size() > 300000 {
-			return fmt.Errorf("winpty 文件完整性检查失败")
+			return fmt.Errorf("winpty crc failed")
 		}
 
 		resp, err := http.Get("https://github.com/rprichard/winpty/releases/download/0.4.3/winpty-0.4.3-msvc2015.zip")

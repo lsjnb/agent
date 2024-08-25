@@ -157,6 +157,16 @@ func init() {
 
 	agentConfig.Read(filepath.Dir(ex) + "/config.yml")
 
+	if agentConfig.Server != "" {
+		agentCliParam.Server = agentConfig.Server
+		agentConfig.Server = ""
+	}
+
+	if agentConfig.Password != "" {
+		agentCliParam.ClientSecret = agentConfig.Password
+		agentConfig.Password = ""
+	}
+
 	monitor.InitConfig(&agentConfig)
 }
 
@@ -204,7 +214,7 @@ func preRun(cmd *cobra.Command, args []string) {
 	}
 
 	if agentCliParam.ReportDelay < 1 || agentCliParam.ReportDelay > 4 {
-		println("report-delay 的区间为 1-4")
+		println("report-delay range is 1-4")
 		os.Exit(1)
 	}
 }
