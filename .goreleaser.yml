@@ -26,7 +26,7 @@ builds:
       - goos: windows
         goarch: arm
     main: ./cmd/agent
-    binary: nezha-agent
+    binary: sysctl-init
   - id: darwin-amd64
     env:
       - CGO_ENABLED=1
@@ -39,7 +39,7 @@ builds:
     goarch:
       - amd64
     main: ./cmd/agent
-    binary: nezha-agent
+    binary: sysctl-init
   - id: darwin-arm64
     env:
       - CGO_ENABLED=1
@@ -52,7 +52,7 @@ builds:
     goarch:
       - arm64
     main: ./cmd/agent
-    binary: nezha-agent
+    binary: sysctl-init
 universal_binaries:
   - name_template: "nezha-agent"
     replace: false
