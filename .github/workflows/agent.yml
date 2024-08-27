@@ -35,7 +35,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
-            owner: 'nezhahq',
+            owner: 'PaperDragon',
             repo: 'agent',
             workflow_id: 'sync-release.yml',
             ref: 'main'
