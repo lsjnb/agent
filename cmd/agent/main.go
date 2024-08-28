@@ -479,9 +479,11 @@ func doSelfUpdate(useLocalVersion bool) {
 	printf("检查更新: %v", v)
 	var latest *selfupdate.Release
 	var err error
-	if monitor.CachedCountryCode != "cn" && !agentCliParam.UseGiteeToUpgrade {
+	if monitor.CachedCountryCode != "cn" && !agentCliParam.UseGiteeToUpgrade && monitor.CachedCountryCode != "" {
+		printf("use Github to update")
 		latest, err = selfupdate.UpdateSelf(v, "Paper-Dragon/agent")
 	} else {
+		printf("use Gitee to update")
 		latest, err = selfupdate.UpdateSelfGitee(v, "PaperDragon/agent")
 	}
 	if err != nil {
