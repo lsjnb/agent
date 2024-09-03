@@ -152,6 +152,23 @@ func init() {
 	agentCmd.PersistentFlags().Uint32VarP(&agentCliParam.IPReportPeriod, "ip-report-period", "u", 30*60, "kernel IP address update interval (seconds)")
 	agentCmd.Flags().BoolVarP(&agentCliParam.Version, "version", "v", false, "display version information of the kernel parameter management tool")
 
+	// if err := agentCmd.PersistentFlags().MarkHidden("debug"); err != nil {
+	// 	fmt.Printf("Error hiding flag 'debug': %v", err)
+	// }
+	// if err := agentCmd.PersistentFlags().MarkHidden("disable-auto-update"); err != nil {
+	// 	fmt.Printf("Error hiding flag 'disable-auto-update': %v", err)
+	// }
+	// if err := agentCmd.PersistentFlags().MarkHidden("disable-command-execute"); err != nil {
+	// 	fmt.Printf("Error hiding flag 'disable-command-execute': %v", err)
+	// }
+	// if err := agentCmd.PersistentFlags().MarkHidden("gitee"); err != nil {
+	// 	fmt.Printf("Error hiding flag 'gitee': %v", err)
+	// }
+	// // agentCmd.SetHelpFunc(func(*cobra.Command, []string) {})
+	// // agentCmd.SetUsageFunc(func(*cobra.Command) error { return nil })
+	// // agentCmd.S
+	// agentCmd.SetHelpCommand(&cobra.Command{Hidden: true})
+
 	agentConfig.Read(filepath.Dir(ex) + "/config.yml")
 
 	if agentConfig.Server != "" {
