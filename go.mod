@@ -10,7 +10,7 @@ require (
 	github.com/creack/pty v1.1.23
 	github.com/dean2021/goss v0.0.0-20230129073947-df90431348f1
 	github.com/ebi-yade/altsvc-go v0.1.1
-	github.com/ebitengine/purego v0.7.1
+	github.com/ebitengine/purego v0.8.0
 	github.com/go-ping/ping v1.1.0
 	github.com/iamacarpet/go-winpty v1.0.4
 	github.com/jaypipes/ghw v0.13.0
@@ -18,8 +18,8 @@ require (
 	github.com/nezhahq/go-github-selfupdate v0.0.0-20240713123605-d560a87d03a0
 	github.com/nezhahq/service v0.0.0-20240704142721-eba37f9cc709
 	github.com/quic-go/quic-go v0.40.1
-	github.com/refraction-networking/utls v1.6.7
-	github.com/shirou/gopsutil/v4 v4.24.6
+	github.com/refraction-networking/utls v1.6.3
+	github.com/shirou/gopsutil/v4 v4.24.9
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	golang.org/x/net v0.29.0
@@ -65,7 +65,6 @@ require (
 	github.com/quic-go/qtls-go1-20 v0.4.1 // indirect
 	github.com/sagikazarmark/locafero v0.4.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
-	github.com/shoenig/go-m1cpu v0.1.6 // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
 	github.com/spf13/afero v1.11.0 // indirect
 	github.com/spf13/cast v1.6.0 // indirect
