@@ -288,7 +288,6 @@ func run() {
 		conn, err = grpc.NewClient(agentCliParam.Server, securityOption, grpc.WithPerRPCCredentials(&auth))
 		if err != nil {
 			printf("connect to kernel failed: %v", err)
-			cancel()
 			retry()
 			continue
 		}
