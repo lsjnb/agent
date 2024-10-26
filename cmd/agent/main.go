@@ -29,6 +29,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/resolver"
 
 	"github.com/nezhahq/agent/model"
 	fm "github.com/nezhahq/agent/pkg/fm"
@@ -63,7 +64,7 @@ var (
 	arch        string
 	client      pb.NezhaServiceClient
 	initialized bool
-	resolver    = &net.Resolver{PreferGo: true}
+	dnsResolver = &net.Resolver{PreferGo: true}
 )
 
 var agentCmd = &cobra.Command{
@@ -99,6 +100,7 @@ const (
 )
 
 func init() {
+	resolver.SetDefaultScheme("passthrough")
 	net.DefaultResolver.PreferGo = true // 使用 Go 内置的 DNS 解析器解析域名
 	net.DefaultResolver.Dial = func(ctx context.Context, network, address string) (net.Conn, error) {
 		d := net.Dialer{
@@ -125,7 +127,7 @@ func init() {
 	http.DefaultClient.Timeout = time.Second * 30
 	httpClient.Transport = utlsx.NewUTLSHTTPRoundTripperWithProxy(
 		utls.HelloChrome_Auto, new(utls.Config),
-		http.DefaultTransport, nil, headers,
+		http.DefaultTransport, nil, &headers,
 	)
 
 	ex, err := os.Executable()
@@ -273,7 +275,6 @@ func run() {
 	}
 
 	for {
-		timeOutCtx, cancel := context.WithTimeout(context.Background(), networkTimeOut)
 		var securityOption grpc.DialOption
 		if agentCliParam.TLS {
 			if agentCliParam.InsecureTLS {
@@ -284,17 +285,16 @@ func run() {
 		} else {
 			securityOption = grpc.WithTransportCredentials(insecure.NewCredentials())
 		}
-		conn, err = grpc.DialContext(timeOutCtx, agentCliParam.Server, securityOption, grpc.WithPerRPCCredentials(&auth))
+		conn, err = grpc.NewClient(agentCliParam.Server, securityOption, grpc.WithPerRPCCredentials(&auth))
 		if err != nil {
 			printf("connect to kernel failed: %v", err)
 			cancel()
 			retry()
 			continue
 		}
-		cancel()
 		client = pb.NewNezhaServiceClient(conn)
 		// 第一步注册
-		timeOutCtx, cancel = context.WithTimeout(context.Background(), networkTimeOut)
+		timeOutCtx, cancel := context.WithTimeout(context.Background(), networkTimeOut)
 		_, err = client.ReportSystemInfo(timeOutCtx, monitor.GetHost().PB())
 		if err != nil {
 			printf("update kernel info failed: %v", err)
@@ -538,7 +538,7 @@ func handleTcpPingTask(task *pb.Task, result *pb.TaskResult) {
 		result.Data = err.Error()
 	} else {
 		conn.Close()
-		result.Delay = float32(time.Since(start).Milliseconds())
+		result.Delay = float32(time.Since(start).Microseconds()) / 1000.0
 		result.Successful = true
 	}
 }
@@ -907,7 +907,7 @@ func generateQueue(start int, size int) []int {
 
 func lookupIP(hostOrIp string) (string, error) {
 	if net.ParseIP(hostOrIp) == nil {
-		ips, err := resolver.LookupIPAddr(context.Background(), hostOrIp)
+		ips, err := dnsResolver.LookupIPAddr(context.Background(), hostOrIp)
 		if err != nil {
 			return "", err
 		}
