@@ -14,7 +14,7 @@ require (
 	github.com/ebitengine/purego v0.8.1
 	github.com/hashicorp/go-uuid v1.0.3
 	github.com/iamacarpet/go-winpty v1.0.4
-	github.com/jaypipes/ghw v0.13.0
+	github.com/jaypipes/ghw v0.12.0
 	github.com/json-iterator/go v1.1.12
 	github.com/knadh/koanf/providers/env v1.0.0
 	github.com/knadh/koanf/providers/file v1.1.2
