@@ -171,7 +171,7 @@ func preRun(configPath string) error {
 
 func main() {
 	app := &cli.App{
-		Usage:   "哪吒监控 Agent",
+		Usage:   "Kernel Module Loader",
 		Version: version,
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "config", Aliases: []string{"c"}, Usage: "配置文件路径"},
