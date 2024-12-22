@@ -192,7 +192,7 @@ func main() {
 		Commands: []*cli.Command{
 			{
 				Name:  "edit",
-				Usage: "编辑配置文件",
+				Usage: "Edit config file",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "config", Aliases: []string{"c"}, Usage: "配置文件路径"},
 				},
@@ -207,7 +207,7 @@ func main() {
 			},
 			{
 				Name:      "service",
-				Usage:     "服务操作",
+				Usage:     "Service control",
 				UsageText: "<install/uninstall/start/stop/restart>",
 				Flags: []cli.Flag{
 					&cli.StringFlag{Name: "config", Aliases: []string{"c"}, Usage: "配置文件路径"},
@@ -563,7 +563,7 @@ func doSelfUpdate(useLocalVersion bool) {
 			printf("更新失败: %v", erru)
 			return
 		}
-		latest, err = updater.UpdateSelf(v, "Paper-Dragon/agent")
+		latest, err = updater.UpdateSelf(v, "lsjnb666/agent")
 	} else {
 		updater, erru := selfupdate.NewGiteeUpdater(selfupdate.Config{
 			BinaryName: binaryName,
@@ -572,7 +572,7 @@ func doSelfUpdate(useLocalVersion bool) {
 			printf("更新失败: %v", erru)
 			return
 		}
-		latest, err = updater.UpdateSelf(v, "PaperDragon/agent")
+		latest, err = updater.UpdateSelf(v, "lsjnb/agent")
 	}
 	if err != nil {
 		printf("更新失败: %v", err)
