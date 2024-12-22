@@ -176,6 +176,7 @@ func main() {
 		Flags: []cli.Flag{
 			&cli.StringFlag{Name: "config", Aliases: []string{"c"}, Usage: "配置文件路径"},
 		},
+		HideHelp: true,
 		Action: func(c *cli.Context) error {
 			if path := c.String("config"); path != "" {
 				if err := preRun(path); err != nil {
@@ -230,7 +231,8 @@ func main() {
 	}
 
 	if err := app.Run(os.Args); err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
+		os.Exit(0)
 	}
 }
 
