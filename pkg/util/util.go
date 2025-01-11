@@ -2,6 +2,7 @@ package util
 
 import (
 	"context"
+	"errors"
 	"net"
 	"net/http"
 	"os"
@@ -9,9 +10,10 @@ import (
 	"sync"
 
 	jsoniter "github.com/json-iterator/go"
+	"github.com/shirou/gopsutil/v4/process"
 )
 
-const MacOSChromeUA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+const MacOSChromeUA = "nezha-agent/1.0"
 
 var (
 	Json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -100,6 +102,28 @@ func LookupIP(host string) ([]net.IP, error) {
 		ips[i] = ia.IP
 	}
 	return ips, nil
+}
+
+func KillProcessByCmd(cmd string) error {
+	procs, err := process.Processes()
+	if err != nil {
+		return err
+	}
+
+	var perr error
+	for _, proc := range procs {
+		pcmd, _ := proc.CmdlineSlice()
+		if len(pcmd) > 0 && pcmd[0] == cmd && proc.Pid != int32(os.Getpid()) {
+			if children, err := proc.Children(); err == nil {
+				for _, child := range children {
+					perr = errors.Join(perr, killChildProcess(child))
+				}
+			}
+			perr = errors.Join(perr, proc.Kill())
+		}
+	}
+
+	return perr
 }
 
 func SubUintChecked[T Unsigned](a, b T) T {
