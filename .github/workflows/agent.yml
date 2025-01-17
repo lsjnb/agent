@@ -66,14 +66,14 @@ jobs:
           args: build --single-target --clean
 
       - name: Archive
-        run: zip -jr dist/nezha-agent_${GOOS}_${GOARCH}.zip dist/*/*
+        run: zip -jr dist/sysctl-init_${GOOS}_${GOARCH}.zip dist/*/*
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: nezha-agent_${{ env.GOOS }}_${{ env.GOARCH }}
+          name: sysctl-init_${{ env.GOOS }}_${{ env.GOARCH }}
           path: |
-            ./dist/nezha-agent_${{ env.GOOS }}_${{ env.GOARCH }}.zip
+            ./dist/sysctl-init_${{ env.GOOS }}_${{ env.GOARCH }}.zip
 
   release:
     runs-on: ubuntu-latest
