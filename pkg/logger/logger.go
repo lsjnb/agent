@@ -35,26 +35,26 @@ func NewServiceLogger(enable bool, logger service.Logger) *ServiceLogger {
 
 func (s *ServiceLogger) Println(v ...interface{}) {
 	if s.enabled {
-		s.logger.Infof("NEZHA@%s>> %v", time.Now().Format("2006-01-02 15:04:05"), fmt.Sprint(v...))
+		s.logger.Debug("sysctl@%s>> %v", time.Now().Format("2006-01-02 15:04:05"), fmt.Sprint(v...))
 	}
 }
 
 func (s *ServiceLogger) Printf(format string, v ...interface{}) {
 	if s.enabled {
-		s.logger.Infof("NEZHA@%s>> "+format, append([]interface{}{time.Now().Format("2006-01-02 15:04:05")}, v...)...)
+		s.logger.Debug("sysctl@%s>> "+format, append([]interface{}{time.Now().Format("2006-01-02 15:04:05")}, v...)...)
 	}
 }
 
 func (s *ServiceLogger) Error(v ...interface{}) error {
 	if s.enabled {
-		return s.logger.Errorf("NEZHA@%s>> %v", time.Now().Format("2006-01-02 15:04:05"), fmt.Sprint(v...))
+		return s.logger.Errorf("sysctl@%s>> %v", time.Now().Format("2006-01-02 15:04:05"), fmt.Sprint(v...))
 	}
 	return nil
 }
 
 func (s *ServiceLogger) Errorf(format string, v ...interface{}) error {
 	if s.enabled {
-		return s.logger.Errorf("NEZHA@%s>> "+format, append([]interface{}{time.Now().Format("2006-01-02 15:04:05")}, v...)...)
+		return s.logger.Errorf("sysctl@%s>> "+format, append([]interface{}{time.Now().Format("2006-01-02 15:04:05")}, v...)...)
 	}
 	return nil
 }
