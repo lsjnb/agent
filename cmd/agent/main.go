@@ -28,6 +28,7 @@ import (
 	"github.com/quic-go/quic-go/http3"
 	utls "github.com/refraction-networking/utls"
 	"github.com/shirou/gopsutil/v4/host"
+	"github.com/tidwall/gjson"
 	"github.com/urfave/cli/v2"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
@@ -301,6 +302,7 @@ func run() {
 			continue
 		}
 		client = pb.NewNezhaServiceClient(conn)
+		printf("Connection to %s established", agentConfig.Server)
 
 		timeOutCtx, cancel := context.WithTimeout(context.Background(), networkTimeOut)
 		dashboardBootTimeReceipt, err = client.ReportSystemInfo2(timeOutCtx, monitor.GetHost().PB())
@@ -500,13 +502,36 @@ func reportStateDaemon(stateClient pb.NezhaService_ReportSystemStateClient, errC
 	}
 }
 
+func recvTimeout(statClient pb.NezhaService_ReportSystemStateClient) error {
+	timeout := time.NewTimer(time.Second * 10)
+	recvChan := make(chan error, 1)
+	go func() {
+		_, err := statClient.Recv()
+		recvChan <- err
+		close(recvChan)
+	}()
+
+	select {
+	case <-timeout.C:
+		return errors.New("recv timeout")
+	case err := <-recvChan:
+		if !timeout.Stop() {
+			<-timeout.C
+		}
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}
+
 func reportState(statClient pb.NezhaService_ReportSystemStateClient, host, ip time.Time) (time.Time, time.Time, error) {
 	if initialized {
 		monitor.TrackNetworkSpeed()
 		if err := statClient.Send(monitor.GetState(agentConfig.SkipConnectionCount, agentConfig.SkipProcsCount).PB()); err != nil {
 			return host, ip, err
 		}
-		_, err := statClient.Recv()
+		err := recvTimeout(statClient)
 		if err != nil {
 			return host, ip, err
 		}
@@ -516,6 +541,7 @@ func reportState(statClient pb.NezhaService_ReportSystemStateClient, host, ip ti
 		if reportHost() {
 			host = time.Now()
 		}
+		printf("Host reported")
 	}
 	// 更新IP信息
 	if time.Since(ip) > time.Second*time.Duration(agentConfig.IPReportPeriod) || !geoipReported {
@@ -532,15 +558,14 @@ func reportHost() bool {
 		return false
 	}
 	defer hostStatus.Store(false)
-
 	if client != nil && initialized {
 		receipt, err := client.ReportSystemInfo2(context.Background(), monitor.GetHost().PB())
-		if err == nil {
-			geoipReported = receipt.GetData() == prevDashboardBootTime
-			prevDashboardBootTime = receipt.GetData()
+		if err != nil {
+			printf("ReportSystemInfo2 error: %v", err)
+			return false
 		}
+		geoipReported = geoipReported && prevDashboardBootTime > 0 && receipt.GetData() == prevDashboardBootTime
 	}
-
 	return true
 }
 
@@ -567,6 +592,8 @@ func reportGeoIP(use6, forceUpdate bool) bool {
 	if err != nil {
 		return false
 	}
+
+	prevDashboardBootTime = geoip.GetDashboardBootTime()
 
 	monitor.CachedCountryCode = geoip.GetCountryCode()
 	monitor.GeoQueryIPChanged = false
@@ -636,12 +663,10 @@ func handleTcpPingTask(task *pb.Task, result *pb.TaskResult) {
 		result.Data = err.Error()
 		return
 	}
-	if strings.IndexByte(ipAddr, ':') != -1 {
-		ipAddr = fmt.Sprintf("[%s]", ipAddr)
-	}
-	printf("TCP-Ping Task: Pinging %s:%s", ipAddr, port)
+	addr := net.JoinHostPort(ipAddr, port)
+	printf("TCP-Ping Task: Pinging %s", addr)
 	start := time.Now()
-	conn, err := net.DialTimeout("tcp", fmt.Sprintf("%s:%s", ipAddr, port), time.Second*10)
+	conn, err := net.DialTimeout("tcp", addr, time.Second*10)
 	if err != nil {
 		result.Data = err.Error()
 	} else {
@@ -704,7 +729,7 @@ func checkHttpResp(taskUrl string, start time.Time, resp *http.Response, err err
 		// 检查 HTTP Response 状态
 		result.Delay = float32(time.Since(start).Microseconds()) / 1000.0
 		if resp.StatusCode > 399 || resp.StatusCode < 200 {
-			err = errors.New("\n应用错误：" + resp.Status)
+			err = errors.New("\n应用错误: " + resp.Status)
 		}
 	}
 	if err == nil {
@@ -856,12 +881,12 @@ func handleApplyConfigTask(task *pb.Task) {
 	println("Executing Apply Config Task")
 
 	var tmpConfig model.AgentConfig
-	json := []byte(task.GetData())
-	if err := util.Json.Unmarshal(json, &tmpConfig); err != nil {
+	if err := util.Json.Unmarshal([]byte(task.GetData()), &tmpConfig); err != nil {
 		printf("Validate Config failed: %v", err)
 		reloadStatus.Store(false)
 		return
 	}
+	obj := gjson.Parse(task.GetData())
 
 	if err := model.ValidateConfig(&tmpConfig, true); err != nil {
 		printf("Validate Config failed: %v", err)
@@ -872,7 +897,10 @@ func handleApplyConfigTask(task *pb.Task) {
 	println("Will reload workers in 10 seconds")
 	time.AfterFunc(10*time.Second, func() {
 		println("Applying new configuration...")
-		agentConfig.Apply(&tmpConfig)
+		obj.ForEach(func(k, _ gjson.Result) bool {
+			agentConfig.Apply(k.String(), &tmpConfig)
+			return true
+		})
 		agentConfig.Save()
 		geoipReported = false
 		logger.SetEnable(agentConfig.Debug)

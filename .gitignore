@@ -4,5 +4,4 @@
 /cmd/agent/config.yml
 *.pprof
 dist
-config.yml
-nezha-agent.exe
+/model/zconfig.go
