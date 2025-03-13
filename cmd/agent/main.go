@@ -313,52 +313,43 @@ func run() {
 			continue
 		}
 		cancel()
+
 		geoipReported = geoipReported && prevDashboardBootTime > 0 && dashboardBootTimeReceipt.GetData() == prevDashboardBootTime
 		prevDashboardBootTime = dashboardBootTimeReceipt.GetData()
 		initialized = true
 
-		errCh := make(chan error)
-
 		wCtx, wCancel := context.WithCancel(context.Background())
+
 		// 执行 Task
-		tasks, err := client.RequestTask(wCtx)
+		tasks, err := doWithTimeout(func() (pb.NezhaService_RequestTaskClient, error) {
+			return client.RequestTask(wCtx)
+		}, networkTimeOut)
 		if err != nil {
 			printf("请求清理垃圾任务失败: %v", err)
+			wCancel()
 			retry()
 			continue
 		}
-		go receiveTasksDaemon(tasks, errCh)
+		go receiveTasksDaemon(tasks, wCancel)
 
-		reportState, err := client.ReportSystemState(wCtx)
+		reportState, err := doWithTimeout(func() (pb.NezhaService_ReportSystemStateClient, error) {
+			return client.ReportSystemState(wCtx)
+		}, networkTimeOut)
 		if err != nil {
 			printf("上报状态信息失败: %v", err)
+			wCancel()
 			retry()
 			continue
 		}
-		go reportStateDaemon(reportState, errCh)
+		go reportStateDaemon(reportState, wCancel)
 
-		var canceled bool
-		for i := 0; i < 2; {
-			select {
-			case <-reloadSigChan:
-				println("Reloading...")
-				wCancel()
-				canceled = true
-			case err := <-errCh:
-				if i == 0 {
-					tasks.CloseSend()
-					reportState.CloseSend()
-					println("Error to close connection ...")
-				}
-				i++
-				printf("worker exit to main: %v", err)
-			}
-		}
-
-		if !canceled {
+		select {
+		case <-reloadSigChan:
+			println("Reloading...")
 			wCancel()
+		case <-wCtx.Done():
+			println("Worker exit...")
 		}
-		close(errCh)
 
 		retry()
 	}
@@ -428,13 +419,16 @@ func runService(action string, path string) {
 	}
 }
 
-func receiveTasksDaemon(tasks pb.NezhaService_RequestTaskClient, errCh chan<- error) {
+func receiveTasksDaemon(tasks pb.NezhaService_RequestTaskClient, cancel context.CancelFunc) {
 	var task *pb.Task
 	var err error
 	for {
-		task, err = tasks.Recv()
+		task, err = doWithTimeout(func() (*pb.Task, error) {
+			return tasks.Recv()
+		}, time.Second*30)
 		if err != nil {
-			errCh <- fmt.Errorf("receiveTasks exit: %v", err)
+			printf("receiveTasks exit: %v", err)
+			cancel()
 			return
 		}
 		go func(t *pb.Task) {
@@ -446,7 +440,8 @@ func receiveTasksDaemon(tasks pb.NezhaService_RequestTaskClient, errCh chan<- er
 			result := doTask(t)
 			if result != nil {
 				if err := tasks.Send(result); err != nil {
-					printf("send task result error: %v", err)
+					printf("send task result exit: %v", err)
+					cancel()
 				}
 			}
 		}(task)
@@ -490,48 +485,32 @@ func doTask(task *pb.Task) *pb.TaskResult {
 }
 
 // reportStateDaemon 向server上报状态信息
-func reportStateDaemon(stateClient pb.NezhaService_ReportSystemStateClient, errCh chan<- error) {
+func reportStateDaemon(stateClient pb.NezhaService_ReportSystemStateClient, cancel context.CancelFunc) {
 	var err error
 	for {
-		lastReportHostInfo, lastReportIPInfo, err = reportState(stateClient, lastReportHostInfo, lastReportIPInfo)
+		_, err = doWithTimeout(func() (*int, error) {
+			lastReportHostInfo, lastReportIPInfo, err = reportState(stateClient, lastReportHostInfo, lastReportIPInfo)
+			return nil, err
+		}, time.Second*10)
 		if err != nil {
-			errCh <- fmt.Errorf("reportStateDaemon exit: %v", err)
+			printf("reportStateDaemon exit: %v", err)
+			cancel()
 			return
 		}
 		time.Sleep(time.Second * time.Duration(agentConfig.ReportDelay))
 	}
 }
 
-func recvTimeout(statClient pb.NezhaService_ReportSystemStateClient) error {
-	timeout := time.NewTimer(time.Second * 10)
-	recvChan := make(chan error, 1)
-	go func() {
-		_, err := statClient.Recv()
-		recvChan <- err
-		close(recvChan)
-	}()
-
-	select {
-	case <-timeout.C:
-		return errors.New("recv timeout")
-	case err := <-recvChan:
-		if !timeout.Stop() {
-			<-timeout.C
-		}
-		if err != nil {
-			return err
-		}
-	}
-	return nil
-}
-
 func reportState(statClient pb.NezhaService_ReportSystemStateClient, host, ip time.Time) (time.Time, time.Time, error) {
+	if statClient.Context().Err() != nil {
+		return host, ip, statClient.Context().Err()
+	}
 	if initialized {
 		monitor.TrackNetworkSpeed()
 		if err := statClient.Send(monitor.GetState(agentConfig.SkipConnectionCount, agentConfig.SkipProcsCount).PB()); err != nil {
 			return host, ip, err
 		}
-		err := recvTimeout(statClient)
+		_, err := statClient.Recv()
 		if err != nil {
 			return host, ip, err
 		}
@@ -541,7 +520,6 @@ func reportState(statClient pb.NezhaService_ReportSystemStateClient, host, ip ti
 		if reportHost() {
 			host = time.Now()
 		}
-		printf("Host reported")
 	}
 	// 更新IP信息
 	if time.Since(ip) > time.Second*time.Duration(agentConfig.IPReportPeriod) || !geoipReported {
@@ -607,6 +585,7 @@ func doSelfUpdate(useLocalVersion bool) {
 	if useLocalVersion {
 		v = semver.MustParse(version)
 	}
+	agentProcs := util.FindProcessByCmd(executablePath)
 	printf("检查更新: %v", v)
 	var latest *selfupdate.Release
 	var err error
@@ -635,7 +614,7 @@ func doSelfUpdate(useLocalVersion bool) {
 	}
 	if !latest.Version.Equals(v) {
 		printf("已经更新至: %v, 正在结束进程", latest.Version)
-		util.KillProcessByCmd(executablePath)
+		util.KillProcesses(agentProcs)
 		os.Exit(1)
 	}
 }
@@ -1144,4 +1123,21 @@ func ioStreamKeepAlive(ctx context.Context, stream pb.NezhaService_IOStreamClien
 			}
 		}
 	}
+}
+
+func doWithTimeout[T any](fn func() (T, error), timeout time.Duration) (T, error) {
+	timeoutCtx, cancel := context.WithTimeout(context.Background(), timeout)
+	defer cancel()
+	var t T
+	var err error
+	go func() {
+		defer cancel()
+		t, err = fn()
+	}()
+	<-timeoutCtx.Done()
+	if timeoutCtx.Err() != context.Canceled {
+		var zero T
+		return zero, fmt.Errorf("context error: %v, fn err: %v", timeoutCtx.Err(), err)
+	}
+	return t, err
 }
