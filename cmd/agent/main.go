@@ -679,10 +679,6 @@ func handleHttpGetTask(task *pb.Task, result *pb.TaskResult) {
 	taskUrl := task.GetData()
 	resp, err := httpClient.Get(taskUrl)
 	printf("HTTP-GET Task: %s", taskUrl)
-	checkHttpResp(taskUrl, start, resp, err, result)
-}
-
-func checkHttpResp(taskUrl string, start time.Time, resp *http.Response, err error, result *pb.TaskResult) {
 	if err == nil {
 		defer resp.Body.Close()
 		_, err = io.Copy(io.Discard, resp.Body)
@@ -785,22 +781,8 @@ func handleApplyConfigTask(task *pb.Task) {
 
 	println("Executing Apply Config Task")
 
-	var tmpConfigRaw map[string]any
-	var tmpConfig model.AgentConfig
-	if err := json.Unmarshal([]byte(task.GetData()), &tmpConfigRaw); err != nil {
-		printf("Parsing Config failed: %v", err)
-		reloadStatus.Store(false)
-		return
-	}
-
-	decoder, err := tmpConfig.MapDecoder()
-	if err != nil {
-		printf("Getting Decoder for AgentConfig failed: %v", err)
-		reloadStatus.Store(false)
-		return
-	}
-
-	if err := decoder.Decode(tmpConfigRaw); err != nil {
+	tmpConfig := agentConfig
+	if err := json.Unmarshal([]byte(task.GetData()), &tmpConfig); err != nil {
 		printf("Parsing Config failed: %v", err)
 		reloadStatus.Store(false)
 		return
@@ -815,9 +797,7 @@ func handleApplyConfigTask(task *pb.Task) {
 	println("Will reload workers in 10 seconds")
 	time.AfterFunc(10*time.Second, func() {
 		println("Applying new configuration...")
-		for k := range tmpConfigRaw {
-			agentConfig.Apply(k, &tmpConfig)
-		}
+		agentConfig := tmpConfig
 		agentConfig.Save()
 		geoipReported = false
 		logger.SetEnable(agentConfig.Debug)
