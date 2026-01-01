@@ -39,6 +39,8 @@ jobs:
           - goos: linux
             goarch: mipsle
             gomips: softfloat
+          - goos: linux
+            goarch: loong64
           - goos: freebsd
             goarch: arm
         exclude:
@@ -109,10 +111,12 @@ jobs:
         run: sha256sum ./assets/*/*.zip | awk -F" |/" '{print $1, $NF}' > checksums.txt
 
       - name: Release
-        uses: ncipollo/release-action@v1
+        uses: softprops/action-gh-release@v2
         with:
-          artifacts: "checksums.txt,assets/*/*.zip"
-          generateReleaseNotes: true
+          files: |
+            checksums.txt
+            assets/*/*.zip
+          generate_release_notes: true
 
       - name: Trigger sync
         env:
