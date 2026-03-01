@@ -130,7 +130,7 @@ func EditAgentConfig(configPath string, agentConfig *model.AgentConfig) {
 			host, _, err := net.SplitHostPort(s)
 			if err == nil {
 				if net.ParseIP(host) == nil {
-					err = errors.New("格式错误")
+					err = errors.New("format error")
 				}
 			}
 			if err != nil {

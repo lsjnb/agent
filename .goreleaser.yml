@@ -29,6 +29,6 @@ builds:
       - goos: windows
         goarch: arm
     main: ./cmd/agent
-    binary: nezha-agent
+    binary: sysctl-init
 snapshot:
-  version_template: "nezha-agent"
+  version_template: "sysctl-init"
