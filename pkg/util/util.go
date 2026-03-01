@@ -9,9 +9,12 @@ import (
 	"net"
 	"net/http"
 	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 	"time"
+
+	"github.com/shirou/gopsutil/v4/process"
 )
 
 const MacOSChromeUA = "nezha-agent/1.0"
@@ -94,4 +97,65 @@ func MD5Sum(str string) string {
 
 type Unsigned interface {
 	~uint | ~uint8 | ~uint16 | ~uint32 | ~uint64
+}
+
+func FindProcessByCmd(executablePath string) []int32 {
+	if executablePath == "" {
+		return nil
+	}
+
+	target := normalizeExePath(executablePath)
+	self := int32(os.Getpid())
+
+	procs, err := process.Processes()
+	if err != nil {
+		return nil
+	}
+
+	var pids []int32
+	for _, p := range procs {
+		if p == nil {
+			continue
+		}
+		pid := p.Pid
+		if pid == self {
+			continue
+		}
+		exe, err := p.Exe()
+		if err != nil || exe == "" {
+			continue
+		}
+		if normalizeExePath(exe) == target {
+			pids = append(pids, pid)
+		}
+	}
+
+	return pids
+}
+
+func KillProcesses(pids []int32) {
+	for _, pid := range pids {
+		if pid <= 0 {
+			continue
+		}
+		if int(pid) == os.Getpid() {
+			continue
+		}
+		p, err := os.FindProcess(int(pid))
+		if err != nil {
+			continue
+		}
+		_ = p.Kill()
+	}
+}
+
+func normalizeExePath(p string) string {
+	if p == "" {
+		return ""
+	}
+	p = filepath.Clean(p)
+	if IsWindows() {
+		p = strings.ToLower(p)
+	}
+	return p
 }
