@@ -7,8 +7,8 @@ import (
 	"slices"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/monitor/disk"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/monitor/disk"
 )
 
 func GetState(config *model.AgentConfig, skipConnectionCount bool, skipProcsCount bool) *model.HostState {

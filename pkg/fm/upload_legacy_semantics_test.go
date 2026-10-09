@@ -12,7 +12,7 @@ import (
 	"sync"
 	"testing"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 type legacyUploadReceiver struct {

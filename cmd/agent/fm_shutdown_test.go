@@ -11,7 +11,7 @@ import (
 	"testing"
 	"time"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func TestFMShutdown_UploadOwnsRecvUntilDeclaredBodyCompletes(t *testing.T) {

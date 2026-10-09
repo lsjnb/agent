@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"testing"
 
-	"github.com/nezhahq/agent/pkg/processgroup"
+	"github.com/lsjnb/agent/pkg/processgroup"
 )
 
 // When cmd.Start() succeeds but a later setup step (AddProcess /

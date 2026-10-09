@@ -4,7 +4,7 @@ import (
 	"errors"
 	"sync"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 var errReportStateWriteClosed = errors.New("ReportState write side is closed")

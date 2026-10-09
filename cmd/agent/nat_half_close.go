@@ -5,7 +5,7 @@ import (
 	"errors"
 	"time"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 var errNATHalfCloseDrainTimeout = errors.New("NAT half-close drain timeout")

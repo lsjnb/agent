@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nezhahq/agent/model"
+	"github.com/lsjnb/agent/model"
 )
 
 // H11 regression: a child that detaches into its own session (setsid) while

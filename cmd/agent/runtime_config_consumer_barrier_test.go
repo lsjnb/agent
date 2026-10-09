@@ -8,8 +8,8 @@ import (
 	"slices"
 	"testing"
 
-	"github.com/nezhahq/agent/model"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func TestDNSConfigTupleSnapshotRemainsCompleteWhenPublishingBMidOperation(t *testing.T) {

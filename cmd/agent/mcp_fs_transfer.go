@@ -5,8 +5,8 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 // gRPC Go ClientStream 不允许两个 goroutine 并发调用 SendMsg

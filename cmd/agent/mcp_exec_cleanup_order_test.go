@@ -7,8 +7,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 // 当 server.exec 走超时分支时，cleanup 顺序必须是：

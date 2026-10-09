@@ -1,4 +1,4 @@
-module github.com/nezhahq/agent
+module github.com/lsjnb/agent
 
 go 1.26.0
 

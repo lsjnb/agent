@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/nezhahq/agent/model"
+	"github.com/lsjnb/agent/model"
 )
 
 func TestAuthHandlerSnapshotRemainsGenerationAAfterPublishingB(t *testing.T) {

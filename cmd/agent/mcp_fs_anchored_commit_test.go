@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nezhahq/agent/pkg/hostfs"
+	"github.com/lsjnb/agent/pkg/hostfs"
 )
 
 func TestAnchoredLockWindow_DoesNotHoldStripeDuringReceive(t *testing.T) {

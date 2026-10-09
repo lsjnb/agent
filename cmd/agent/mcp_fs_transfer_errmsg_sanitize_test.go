@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/nezhahq/agent/model"
+	"github.com/lsjnb/agent/model"
 )
 
 type pathLeakReader struct{ err error }

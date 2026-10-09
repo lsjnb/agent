@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"testing"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 	"google.golang.org/grpc/metadata"
 )
 

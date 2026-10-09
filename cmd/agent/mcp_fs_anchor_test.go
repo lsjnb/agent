@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/nezhahq/agent/pkg/hostfs"
+	"github.com/lsjnb/agent/pkg/hostfs"
 )
 
 func TestAnchor_PreservesAbsolutePathContractAndRootGuard(t *testing.T) {

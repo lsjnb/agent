@@ -9,7 +9,7 @@ import (
 	"testing"
 	"time"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func TestFMStreamOwnership_SerializesDownloadListAndKeepaliveAndClosesOnce(t *testing.T) {

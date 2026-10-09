@@ -10,7 +10,7 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/nezhahq/agent/model"
+	"github.com/lsjnb/agent/model"
 )
 
 func fsTransferUpload(stream fsTransferStream, req *model.FsTransferRequest) {

@@ -7,7 +7,7 @@ import (
 	"sync/atomic"
 )
 
-const fmProducerObserverContextKey = "github.com/nezhahq/agent/agentcompat/fm-producer-observer"
+const fmProducerObserverContextKey = "github.com/lsjnb/agent/agentcompat/fm-producer-observer"
 
 func prepareFMSessionContext(ctx context.Context, sessionID string) (context.Context, func()) {
 	var activeCount atomic.Int64

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func TestTerminalStreamOwnership_SerializesKeepaliveAndPTYAndClosesOnce(t *testing.T) {

@@ -6,7 +6,7 @@ import (
 	"io"
 	"sync"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 type streamTaskRegistry struct {

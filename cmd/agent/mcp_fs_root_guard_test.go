@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"testing"
 
-	"github.com/nezhahq/agent/model"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 // TestIsFilesystemRootRejectsVolumeRoots is the red-bar test for the

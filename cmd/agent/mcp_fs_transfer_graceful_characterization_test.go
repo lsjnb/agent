@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/metadata"
 )

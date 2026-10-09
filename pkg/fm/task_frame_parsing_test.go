@@ -8,7 +8,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 type pathCommandConsumer func(*Task, string) error

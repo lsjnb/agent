@@ -6,7 +6,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/nezhahq/agent/model"
+	"github.com/lsjnb/agent/model"
 )
 
 // xferSender / capturingXferSender 是给 streamFileChunks 用的最小写出接口：

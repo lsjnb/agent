@@ -11,8 +11,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nezhahq/agent/pkg/fm"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/pkg/fm"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func TestGRPCStreamLifecycle_NATBridgesBytesAndHalfCloses(t *testing.T) {

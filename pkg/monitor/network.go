@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/monitor/nic"
-	"github.com/nezhahq/agent/pkg/util"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/monitor/nic"
+	"github.com/lsjnb/agent/pkg/util"
 )
 
 var networkNow = time.Now

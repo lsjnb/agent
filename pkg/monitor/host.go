@@ -5,9 +5,9 @@ import (
 	"runtime"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/monitor/cpu"
-	"github.com/nezhahq/agent/pkg/monitor/disk"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/monitor/cpu"
+	"github.com/lsjnb/agent/pkg/monitor/disk"
 )
 
 func GetHost(config *model.AgentConfig) *model.Host {

@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 // 让 sh 主进程立即退出，但生成一个孙进程 sleep 30s 后 touch sentinel。

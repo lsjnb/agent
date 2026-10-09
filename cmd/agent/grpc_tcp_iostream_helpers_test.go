@@ -6,7 +6,7 @@ import (
 	"io"
 	"testing"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 type grpcTCPIOObservation struct {

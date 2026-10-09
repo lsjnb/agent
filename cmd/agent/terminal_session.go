@@ -6,9 +6,9 @@ import (
 	"io"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/pty"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/pty"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 const (

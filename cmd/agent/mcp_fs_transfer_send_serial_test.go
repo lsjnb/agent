@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 // gRPC Go ClientStream does not allow concurrent SendMsg invocations

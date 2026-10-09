@@ -5,7 +5,7 @@ import (
 	"errors"
 	"sync"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 var errRequestTaskSessionClosed = errors.New("RequestTask result stream is closed")

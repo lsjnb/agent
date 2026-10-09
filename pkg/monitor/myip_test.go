@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nezhahq/agent/pkg/util"
+	"github.com/lsjnb/agent/pkg/util"
 )
 
 const (

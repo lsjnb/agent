@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func TestIOStreamWriteOwner_SerializesSendAndClose(t *testing.T) {

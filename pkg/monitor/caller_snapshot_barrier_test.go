@@ -12,10 +12,10 @@ import (
 	psLoad "github.com/shirou/gopsutil/v4/load"
 	"github.com/shirou/gopsutil/v4/mem"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/monitor/disk"
-	"github.com/nezhahq/agent/pkg/monitor/gpu/vendor"
-	"github.com/nezhahq/agent/pkg/monitor/nic"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/monitor/disk"
+	"github.com/lsjnb/agent/pkg/monitor/gpu/vendor"
+	"github.com/lsjnb/agent/pkg/monitor/nic"
 )
 
 func TestMonitorUsesCallerSnapshotAfterSourceMutationMidOperation(t *testing.T) {

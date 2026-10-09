@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 
-	"github.com/nezhahq/agent/model"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func setTestRuntimeConfig(config model.AgentConfig) *model.AgentConfig {

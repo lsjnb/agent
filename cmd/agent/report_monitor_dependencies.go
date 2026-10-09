@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/monitor"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/monitor"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 type reportMonitorDependencySet struct {

@@ -4,8 +4,8 @@ import (
 	"slices"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/util"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/util"
 )
 
 type dnsConfigTuple struct {

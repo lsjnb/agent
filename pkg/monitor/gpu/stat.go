@@ -3,7 +3,7 @@ package gpu
 import (
 	"context"
 
-	"github.com/nezhahq/agent/pkg/monitor/gpu/vendor"
+	"github.com/lsjnb/agent/pkg/monitor/gpu/vendor"
 )
 
 // GetStat reports per-card utilization plus memory where the vendor exposes

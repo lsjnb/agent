@@ -7,7 +7,7 @@ import (
 	"testing/synctest"
 	"time"
 
-	"github.com/nezhahq/agent/model"
+	"github.com/lsjnb/agent/model"
 )
 
 func TestReportStateDaemon_PreservesConfiguredCadenceAndReceipts(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 	"testing"
 	"time"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func TestTerminalShutdown_RemoteEOFClosesPTYAndJoinsProducerBeforeReturn(t *testing.T) {

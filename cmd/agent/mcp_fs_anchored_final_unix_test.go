@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nezhahq/agent/pkg/hostfs"
+	"github.com/lsjnb/agent/pkg/hostfs"
 )
 
 func TestAnchoredOpen_parent_replacement_cannot_redirect_final_open(t *testing.T) {

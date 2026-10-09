@@ -3,8 +3,8 @@ package main
 import (
 	"sync/atomic"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/logger"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/logger"
 )
 
 var (

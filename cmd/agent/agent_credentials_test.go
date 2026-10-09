@@ -3,7 +3,7 @@ package main
 import (
 	"testing"
 
-	"github.com/nezhahq/agent/model"
+	"github.com/lsjnb/agent/model"
 )
 
 func restoreRuntimeConfigSnapshot(t *testing.T) {

@@ -5,7 +5,7 @@ import (
 	"errors"
 	"testing"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func TestReceiveTasksDaemon_ExitsWhenConnectionContextCanceled(t *testing.T) {

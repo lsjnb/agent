@@ -10,7 +10,7 @@ import (
 	"os/user"
 	"path/filepath"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 func (t *Task) listDir(dir string) error {

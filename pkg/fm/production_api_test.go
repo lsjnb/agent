@@ -10,7 +10,7 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/nezhahq/agent/pkg/fm"
+	"github.com/lsjnb/agent/pkg/fm"
 )
 
 func TestProductionBuild_HasNoAgentcompatObserverAPIOrStrings(t *testing.T) {

@@ -8,10 +8,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/logger"
-	"github.com/nezhahq/agent/pkg/util"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/logger"
+	"github.com/lsjnb/agent/pkg/util"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 var (

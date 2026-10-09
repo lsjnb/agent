@@ -5,7 +5,7 @@ package gpu
 import (
 	"context"
 
-	"github.com/nezhahq/agent/pkg/monitor/gpu/vendor"
+	"github.com/lsjnb/agent/pkg/monitor/gpu/vendor"
 )
 
 const (

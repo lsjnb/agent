@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/nezhahq/agent/model"
+	"github.com/lsjnb/agent/model"
 )
 
 func TestApplyPendingReloadKeepsLiveConfigWhenSaveFails(t *testing.T) {

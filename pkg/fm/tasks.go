@@ -8,7 +8,7 @@ import (
 	"sync"
 	"sync/atomic"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 type Sender interface {

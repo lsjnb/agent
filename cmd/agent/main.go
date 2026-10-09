@@ -31,15 +31,15 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/resolver"
 
-	"github.com/nezhahq/agent/cmd/agent/commands"
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/fsnotifyx"
-	"github.com/nezhahq/agent/pkg/logger"
-	"github.com/nezhahq/agent/pkg/monitor"
-	"github.com/nezhahq/agent/pkg/processgroup"
-	"github.com/nezhahq/agent/pkg/util"
-	utlsx "github.com/nezhahq/agent/pkg/utls"
-	pb "github.com/nezhahq/agent/proto"
+	"github.com/lsjnb/agent/cmd/agent/commands"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/fsnotifyx"
+	"github.com/lsjnb/agent/pkg/logger"
+	"github.com/lsjnb/agent/pkg/monitor"
+	"github.com/lsjnb/agent/pkg/processgroup"
+	"github.com/lsjnb/agent/pkg/util"
+	utlsx "github.com/lsjnb/agent/pkg/utls"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 var (

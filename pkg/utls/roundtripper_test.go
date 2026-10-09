@@ -13,8 +13,8 @@ import (
 
 	utls "github.com/refraction-networking/utls"
 
-	"github.com/nezhahq/agent/pkg/util"
-	utlsx "github.com/nezhahq/agent/pkg/utls"
+	"github.com/lsjnb/agent/pkg/util"
+	utlsx "github.com/lsjnb/agent/pkg/utls"
 )
 
 type tlsRequestObservation struct {

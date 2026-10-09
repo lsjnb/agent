@@ -6,9 +6,9 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/nezhahq/agent/model"
-	"github.com/nezhahq/agent/pkg/monitor/disk"
-	"github.com/nezhahq/agent/pkg/monitor/nic"
+	"github.com/lsjnb/agent/model"
+	"github.com/lsjnb/agent/pkg/monitor/disk"
+	"github.com/lsjnb/agent/pkg/monitor/nic"
 )
 
 func TestMonitorUsesAuthoritativeSnapshotReferenceFields(t *testing.T) {

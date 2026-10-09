@@ -6,7 +6,7 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/nezhahq/agent/pkg/hostfs"
+	"github.com/lsjnb/agent/pkg/hostfs"
 )
 
 func TestAnchoredRejectsFinal_windows_reparse_point(t *testing.T) {

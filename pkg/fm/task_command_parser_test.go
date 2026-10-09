@@ -5,7 +5,7 @@ import (
 	"testing"
 	"testing/synctest"
 
-	pb "github.com/nezhahq/agent/proto"
+	pb "github.com/lsjnb/agent/proto"
 )
 
 type taskParsedCommandDispatcher func(*Task, parsedCommand) error
